@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  xmasterkey: '$2a$10$4ESULxsDJTd8cdmFp2fCouMPM7mGrNoGMf9OW2MA3FVy6YjLg9M1m',
+  binid: '656288a70574da7622cc03b3',
+  getAlbumLogEndpoint: 'https://api.jsonbin.io/v3/b/656288a70574da7622cc03b3'
 };
 
 /*
