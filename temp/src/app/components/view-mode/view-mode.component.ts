@@ -11,7 +11,7 @@ export class ViewModeComponent implements OnInit {
 
   constructor(public binService: AbstractBinService) { }
 
-  public albumArray: any = [];
+  public albumArray: any;
 
   public retrievedAlbums: boolean = false;
 
@@ -21,11 +21,14 @@ export class ViewModeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if(this.albumArray.length === 0){
+    if(!this.binService.albumArray){
       this.binService.getAlbumList().subscribe(array => {
         this.albumArray = array.record;
         this.retrievedAlbums = true;
         })
+    } else {
+      this.retrievedAlbums = true;
+      this.albumArray = this.binService.albumArray.record;
     }
   
   }

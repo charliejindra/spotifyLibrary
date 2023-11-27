@@ -19,13 +19,14 @@ export class BinService implements AbstractBinService {
     
   }
   
-  
+  public albumArray: any;
 
   public getAlbumList() : Observable<JsonBin<AlbumLog>>{
 
     return this.http.get<JsonBin<AlbumLog>>(environment.getAlbumLogEndpoint,{ 'headers': this.headers })
       .pipe(
         map(songLogs => {
+          this.albumArray = songLogs;
           return songLogs;
         })
       )

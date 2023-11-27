@@ -5,4 +5,5 @@ import { JsonBin } from "src/app/models/json-bin";
 
 export abstract class AbstractBinService {
     public abstract getAlbumList(): Observable<JsonBin<AlbumLog>>;
+    public abstract albumArray: any;
 }

@@ -11,6 +11,8 @@ import { AbstractBinService } from './services/bin/abstract.bin.service';
 import { BinService } from './services/bin/bin.service';
 import { HttpClientModule } from '@angular/common/http';
 import { SoloViewComponent } from './components/solo-view/solo-view.component';
+import { AbstractSoloService } from './services/solo-view/abstract.solo-view.service';
+import { SoloViewService } from './services/solo-view/solo-view.service';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,7 @@ import { SoloViewComponent } from './components/solo-view/solo-view.component';
     HttpClientModule
   ],
   providers: [
+    {provide: AbstractSoloService, useClass: SoloViewService},
     {provide: AbstractBinService, useClass: BinService}
   ],
   bootstrap: [AppComponent]

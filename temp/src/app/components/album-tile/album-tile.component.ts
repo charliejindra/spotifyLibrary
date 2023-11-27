@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AbstractSoloService } from 'src/app/services/solo-view/abstract.solo-view.service';
 
 @Component({
   selector: 'app-album-tile',
@@ -7,7 +9,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class AlbumTileComponent implements OnInit {
 
-  constructor() { }
+  constructor(public router: Router, public soloview: AbstractSoloService) { }
 
   @Input() title: string;
   @Input() imgUrl: string;
@@ -17,7 +19,9 @@ export class AlbumTileComponent implements OnInit {
   }
 
   public goToSoloView() {
-    
+    this.soloview.title = this.title;
+    this.soloview.img_url = this.imgUrl;
+    this.router.navigateByUrl('/solo');
   }
 
 }
