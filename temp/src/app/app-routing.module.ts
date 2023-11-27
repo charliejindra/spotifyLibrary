@@ -6,11 +6,10 @@ import { ViewModeComponent } from './components/view-mode/view-mode.component';
 
 
 const routes: Routes = [
-  { path: '', component: ChoiceMenuComponent},
+  { path: '', component: ViewModeComponent},
   { path: 'view', component: ViewModeComponent},
-  { path: 'trackmode', component: TrackModeComponent},
   { path: 'home', component: ChoiceMenuComponent },
-  { path: '**', component: ChoiceMenuComponent }
+  { path: '**', component: ViewModeComponent }
 ];
 
 @NgModule({

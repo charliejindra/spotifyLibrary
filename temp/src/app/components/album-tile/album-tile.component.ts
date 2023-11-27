@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-album-tile',
@@ -8,6 +8,9 @@ import { Component, OnInit } from '@angular/core';
 export class AlbumTileComponent implements OnInit {
 
   constructor() { }
+
+  @Input() title: string;
+  @Input() imgUrl: string;
 
   ngOnInit(): void {
   }
