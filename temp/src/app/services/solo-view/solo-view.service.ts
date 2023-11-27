@@ -10,4 +10,7 @@ export class SoloViewService implements AbstractSoloService {
 
   public title: string;
   public img_url: string;
+  public artist: string;
+  public timestamp: string;
+  public firstListen: string;
 }
