@@ -1,4 +1,19 @@
-div {
+div.show-image img {
     width: 100px;
     height:100px;
+}
+
+div.show-image:hover img{
+    opacity:0.5;
+}
+div.show-image:hover h3 {
+    display:block;
+}
+div.show-image h3 {
+    position:absolute;
+    display:none;
+}
+div.show-image h3.update{
+    top:0;
+    left:0;
 }

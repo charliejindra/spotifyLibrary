@@ -10,6 +10,7 @@ import { ViewModeComponent } from './components/view-mode/view-mode.component';
 import { AbstractBinService } from './services/bin/abstract.bin.service';
 import { BinService } from './services/bin/bin.service';
 import { HttpClientModule } from '@angular/common/http';
+import { SoloViewComponent } from './components/solo-view/solo-view.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { HttpClientModule } from '@angular/common/http';
     TrackModeComponent,
     ChoiceMenuComponent,
     AlbumTileComponent,
-    ViewModeComponent
+    ViewModeComponent,
+    SoloViewComponent
   ],
   imports: [
     BrowserModule,

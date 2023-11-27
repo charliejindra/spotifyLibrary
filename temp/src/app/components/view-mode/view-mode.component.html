@@ -1,6 +1,10 @@
 <div *ngIf="retrievedAlbums; else loading" class="grid">
     <div *ngFor="let album of albumArray" >
-        <app-album-tile [title]="album.name" [imgUrl]="album.img_url">{{album}}</app-album-tile>
+        <app-album-tile 
+        [title]="album.name" 
+        [imgUrl]="album.img_url"
+        [size]="size"
+        >{{album}}</app-album-tile>
     </div>
 </div>
 <ng-template #loading>

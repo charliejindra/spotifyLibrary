@@ -11,8 +11,13 @@ export class AlbumTileComponent implements OnInit {
 
   @Input() title: string;
   @Input() imgUrl: string;
+  @Input() size: string;
 
   ngOnInit(): void {
+  }
+
+  public goToSoloView() {
+    
   }
 
 }

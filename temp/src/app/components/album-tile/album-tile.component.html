@@ -1,1 +1,4 @@
-<img [src]="imgUrl">
+<div class="show-image">
+    <img (click)="goToSoloView()" [src]="imgUrl" [style.width]="size" [style.height]="size">
+    <h3 class="update" type="button" value="Update" >{{title}}</h3>
+</div>
