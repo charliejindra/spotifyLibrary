@@ -84,7 +84,7 @@ scope = 'user-modify-playback-state user-top-read playlist-modify-public user-re
 
 #erase cache and prompt for user permission
 try:
-    token = util.prompt_for_user_token(username, scope)
+    token = util.prompt_for_user_token(username, scope, cache_path='.cache-charlessjindra')
 except:
     os.remove(f".cache-{username}")
     token = util.prompt_for_user_token(username, scope)
@@ -95,61 +95,64 @@ spotifyObj = spotipy.Spotify(auth=token)
 
 while True:
 
+
     try:
-
         data = spotifyObj.current_user_playing_track()
-        #print(data["currently_playing_type"])
+    except Exception as inst:
+        print(type(inst))    # the exception type
+        print(inst.args)     # arguments stored in .args
+        print(inst)          # __str__ allows args to be printed directly,
+        token = util.prompt_for_user_token(username, scope, cache_path='.cache-charlessjindra')
+        spotifyObj = spotipy.Spotify(auth=token)
 
-        if(data):
-            if(data["currently_playing_type"] == 'track'):
+    #print(data["currently_playing_type"])
 
-                print(data["progress_ms"] / data["item"]["duration_ms"])
+    if(data):
+        if(data["currently_playing_type"] == 'track'):
 
-                # we have to have listened to a really good portion of the song
-                if(data["progress_ms"] / data["item"]["duration_ms"] > .9):
-                
+            print(data["progress_ms"] / data["item"]["duration_ms"])
 
-                    album = data["item"]["album"]
+            # we have to have listened to a really good portion of the song
+            if(data["progress_ms"] / data["item"]["duration_ms"] > .9):
+            
 
-                    print("new data")
-                    binData = {
-                        "id": album["id"],
-                        "name": album["name"],
-                        "artist": album["artists"][0]["name"],
-                        "img_url": album["images"][1]["url"],
-                        "timestamp": str(datetime.now())
-                    }
-                    print(json.dumps(binData, indent=4))
+                album = data["item"]["album"]
 
-                    import requests
-                    url = 'https://api.jsonbin.io/v3/b/656288a70574da7622cc03b3'
-                    headers = {
-                    'Content-Type': 'application/json',
-                    'X-Master-Key': '$2a$10$4ESULxsDJTd8cdmFp2fCouMPM7mGrNoGMf9OW2MA3FVy6YjLg9M1m'
-                    }
+                print("new data")
+                binData = {
+                    "id": album["id"],
+                    "name": album["name"],
+                    "artist": album["artists"][0]["name"],
+                    "img_url": album["images"][1]["url"],
+                    "timestamp": str(datetime.now())
+                }
+                print(json.dumps(binData, indent=4))
 
-                    req = requests.get(url+"/latest", json=None, headers=headers)
+                import requests
+                url = 'https://api.jsonbin.io/v3/b/656288a70574da7622cc03b3'
+                headers = {
+                'Content-Type': 'application/json',
+                'X-Master-Key': '$2a$10$4ESULxsDJTd8cdmFp2fCouMPM7mGrNoGMf9OW2MA3FVy6YjLg9M1m'
+                }
 
-                    responseArray = json.loads(req.text)["record"]
-                    #print(responseArray)
+                req = requests.get(url+"/latest", json=None, headers=headers)
 
-                    if(not containsThisAlbum(binData["id"], responseArray)):
+                responseArray = json.loads(req.text)["record"]
+                #print(responseArray)
 
-                        print("inserting into array")
-                        responseArray.insert(0,binData)
+                if(not containsThisAlbum(binData["id"], responseArray)):
 
-                        req = requests.put(url, json=responseArray, headers=headers)
-                        print("inserted into bin")
-                        #print(req.text)
-                    else:
-                        print("record already present, waiting")
+                    print("inserting into array")
+                    responseArray.insert(0,binData)
+
+                    req = requests.put(url, json=responseArray, headers=headers)
+                    print("inserted into bin")
+                    #print(req.text)
+                else:
+                    print("record already present, waiting")
 
 
-        print("==================")
+    print("==================")
 
 
-        time.sleep(10)
-
-    except spotipy.SpotifyOauthError as e:
-        print("trying to re authenticate")
-        sp = spotipy.Spotify(auth_manager=spotipy.SpotifyOAuth(scope=scope))
+    time.sleep(10)

@@ -16,7 +16,7 @@ export class ViewModeComponent implements OnInit {
   public retrievedAlbums: boolean = false;
 
   public get size(): string {
-    let temp = 500 - (Math.log(this.albumArray.length) * 100);
+    let temp = 500 - (Math.log(this.albumArray.length) * 75);
     return temp + 'px';
   }
 
