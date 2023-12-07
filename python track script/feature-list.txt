@@ -1,5 +1,4 @@
 list of features id like to implement in order of priority:
 
-make a big ole number telling you how many albums you have in your pokedex
 handle DJ/other foreign response
 if crashes try to send email to me

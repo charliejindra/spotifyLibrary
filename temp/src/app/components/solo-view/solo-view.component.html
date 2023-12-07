@@ -1,19 +1,25 @@
-<div *ngIf="modify; else normal">
-    <input type="text" [value]="this.soloService.title">
-    <button (click)="modifyMode()">Save</button>
+<div *ngIf="inspect; else normale">
+    <img [src]="this.soloService.img_url" (click)="inspectMode()" class="giant">
 </div>
-<ng-template #normal>
-    <h1>{{this.soloService.title}}</h1>
-    <h2>{{this.soloService.artist}}</h2>
+<ng-template #normale>
+    <div *ngIf="modify; else normal">
+        <input type="text" [value]="this.soloService.title">
+        <button (click)="modifyMode()">Save</button>
+    </div>
+    <ng-template #normal>
+        <h1>{{this.soloService.title}}</h1>
+        <h2>{{this.soloService.artist}}</h2>
+    </ng-template>
+    
+    <img [src]="this.soloService.img_url">
+    <h3>First Listen:</h3>
+    <h3>{{this.soloService.firstListen}}</h3>
+    <div style="display:inline-block">
+        <button (click)="soloService.deleteAlbum()">Delete</button>
+        <button (click)="modifyMode()">Modify</button>
+        <button (click)="inspectMode()">Inspect</button>
+    </div>
+    <br/>
+    <br/>
+    <button routerLink="/view">back</button>
 </ng-template>
-
-<img [src]="this.soloService.img_url">
-<h3>First Listen:</h3>
-<h3>{{this.soloService.firstListen}}</h3>
-<div style="display:inline-block">
-    <button (click)="soloService.deleteAlbum()">Delete</button>
-    <button (click)="modifyMode()">Modify</button>
-</div>
-<br/>
-<br/>
-<button routerLink="/view">back</button>
