@@ -3,9 +3,10 @@ import { environment } from 'src/environments/environment';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { JsonBin } from 'src/app/models/json-bin';
 import { AlbumLog } from 'src/app/models/album-log';
-import { Observable} from "rxjs";
+import { Observable, of} from "rxjs";
 import {map} from "rxjs/operators";
 import { AbstractBinService } from './abstract.bin.service';
+import { Album } from 'src/app/models/album';
 
 @Injectable({
   providedIn: 'root'
@@ -19,17 +20,25 @@ export class BinService implements AbstractBinService {
     
   }
   
-  public albumArray: any;
+  public albumArray: Array<Album>;
 
-  public getAlbumList() : Observable<JsonBin<AlbumLog>>{
+  public getAlbumList() : Observable<Array<Album>>{
 
-    return this.http.get<JsonBin<AlbumLog>>(environment.getAlbumLogEndpoint,{ 'headers': this.headers })
+    return this.http.get<JsonBin<Album>>(environment.getAlbumLogEndpoint,{ 'headers': this.headers })
       .pipe(
         map(songLogs => {
-          this.albumArray = songLogs;
-          return songLogs;
+          this.albumArray = songLogs.record;
+          return songLogs.record;
         })
       )
   }
 
+  public putAlbumList() : Observable<Array<Album>> {
+
+    return this.http.put<Album[]>(environment.getAlbumLogEndpoint, this.albumArray, { 'headers': this.headers });
+  }
+
 }
+
+// NEXT TIME:
+// add put method for updating the bin with the new albumArray

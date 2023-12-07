@@ -15,6 +15,8 @@ export class ViewModeComponent implements OnInit {
 
   public retrievedAlbums: boolean = false;
 
+  public collectionLength: number;
+
   public get size(): string {
     let temp = 500 - (Math.log(this.albumArray.length) * 75);
     return temp + 'px';
@@ -23,12 +25,15 @@ export class ViewModeComponent implements OnInit {
   ngOnInit(): void {
     if(!this.binService.albumArray){
       this.binService.getAlbumList().subscribe(array => {
-        this.albumArray = array.record;
+        this.albumArray = array;
+        this.collectionLength = array.length;
         this.retrievedAlbums = true;
         })
     } else {
+      
       this.retrievedAlbums = true;
-      this.albumArray = this.binService.albumArray.record;
+      this.albumArray = this.binService.albumArray;
+      this.collectionLength = this.albumArray.length;
     }
   
   }

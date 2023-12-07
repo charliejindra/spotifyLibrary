@@ -1,13 +1,18 @@
-<div *ngIf="retrievedAlbums; else loading" class="grid">
-    <div *ngFor="let album of albumArray" >
-        <app-album-tile 
-        [title]="album.name" 
-        [imgUrl]="album.img_url"
-        [size]="size"
-        [artist]="album.artist"
-        [timestamp]="album.timestamp"
-        >{{album}}</app-album-tile>
+<div *ngIf="retrievedAlbums; else loading">
+    <h3 style="text-align: center;">{{collectionLength}}</h3>
+    <div class="grid">
+        <div *ngFor="let album of albumArray" class="grid">
+            <app-album-tile 
+            [title]="album.name" 
+            [imgUrl]="album.img_url"
+            [size]="size"
+            [artist]="album.artist"
+            [timestamp]="album.timestamp"
+            [id]="album.id"
+            >{{album}}</app-album-tile>
+        </div>
     </div>
+    
 </div>
 <ng-template #loading>
     <h1>Albums loading, please wait!</h1>

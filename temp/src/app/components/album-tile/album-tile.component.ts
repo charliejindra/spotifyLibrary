@@ -16,6 +16,7 @@ export class AlbumTileComponent implements OnInit {
   @Input() size: string;
   @Input() artist: string;
   @Input() timestamp: string;
+  @Input() id: string;
 
   ngOnInit(): void {
   }
@@ -25,6 +26,7 @@ export class AlbumTileComponent implements OnInit {
     this.soloview.img_url = this.imgUrl;
     this.soloview.artist = this.artist;
     this.soloview.firstListen= this.timestamp;
+    this.soloview.id = this.id;
     this.router.navigateByUrl('/solo');
   }
 

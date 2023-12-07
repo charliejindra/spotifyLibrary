@@ -99,6 +99,7 @@ while True:
     try:
         data = spotifyObj.current_user_playing_track()
     except Exception as inst:
+        print('exception reached')
         print(type(inst))    # the exception type
         print(inst.args)     # arguments stored in .args
         print(inst)          # __str__ allows args to be printed directly,
