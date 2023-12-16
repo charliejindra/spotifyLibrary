@@ -14,7 +14,7 @@ import logging
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 import base64
-from email.message import Message
+from email.message import EmailMessage, Message
 
 import google.auth
 from googleapiclient.discovery import build
@@ -83,57 +83,37 @@ def get_credentials(scopes):
     return credentials
 
 def sendEmail(creds):
-
+  
+    # CODE BASED ON:
+    #https://developers.google.com/gmail/api/guides/sending#python_2
   try:
     # create gmail api client
     service = build("gmail", "v1", credentials=creds)
 
-    message = Message()
+    message = EmailMessage()
     print(type(message))
-    message["To"] = "musicnguyens@gmail.com"
+    message["To"] = "charlessjindra@gmail.com"
     message["From"] = "charlessjindra@gmail.com"
+    message["Subject"] = "poopy stinky"
+    message.set_content('this is a message to remind you that you are poopy and also stinky')
     
-    # message["payload"] = {}
-    # message["payload"]["headers"] = {}
+    encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
 
-    # message["payload"]["headers"]["To"] = "musicnguyens@gmail.com"
-    # message["payload"]["headers"]["From"] = "charlessjindra@gmail.com"
-    # message["payload"]["headers"]["Subject"] = "poopy stinky"
 
-    # print(type(message))
-
-    # # encoded message
-    # #encoded_message = base64.urlsafe_b64encode(message.as_bytes()).encode()
-    create_message = base64.b64encode(message.as_bytes()).decode()
-
-    
-    # message = MIMEText('This is the body of tdskfjhe email')
-    # message['To'] = 'musicnguyens@gmail.com'
-    # message['subject'] = 'Email Subject'
-    # create_message = {"raw": base64.urlsafe_b64encode(message.as_bytes()).decode()}
+    create_message = {"raw": encoded_message}
     # pylint: disable=E1101
-
-
-    import requests
-
-    url = f'https://gmail.googleapis.com/gmail/v1/users/me/messages/send'
-
-    print('here are the creds')
-    print(creds.token)
-    print('there was the creds')
-    Headers = { 'Authorization': f'Bearer {creds.token}', 'Content-Type': 'application/json', 'Accept': 'application/json' }
-
-    Headers["To"] = "musicnguyens@gmail.com"
-    x = requests.post(url=url, data=create_message, headers=Headers)
-
-    
-
-    # print(f'Draft id: {draft["id"]}\nDraft message: {draft["message"]}')
-    print(x.text)
-
+    send_message = (
+        service.users()
+        .messages()
+        .send(userId="me", body=create_message)
+        .execute()
+    )
+    print(f'Message Id: {send_message["id"]}')
   except HttpError as error:
     print(f"An error occurred: {error}")
-    draft = None
+    send_message = None
+  return send_message
+
 
 
 #setup logger
