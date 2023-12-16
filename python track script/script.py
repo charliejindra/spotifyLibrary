@@ -11,6 +11,16 @@ from json.decoder import JSONDecodeError
 import time
 #importing the module 
 import logging 
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+import base64
+from email.message import Message
+
+import google.auth
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+import base64
+from email.mime.text import MIMEText
 
 
 
@@ -67,6 +77,65 @@ def containsThisAlbum(albumId, aList):
             return True
     return False
 
+def get_credentials(scopes):
+    flow = InstalledAppFlow.from_client_secrets_file('./client_secret.json', scopes)
+    credentials = flow.run_local_server(port=4200)
+    return credentials
+
+def sendEmail(creds):
+
+  try:
+    # create gmail api client
+    service = build("gmail", "v1", credentials=creds)
+
+    message = Message()
+    print(type(message))
+    message["To"] = "musicnguyens@gmail.com"
+    message["From"] = "charlessjindra@gmail.com"
+    
+    # message["payload"] = {}
+    # message["payload"]["headers"] = {}
+
+    # message["payload"]["headers"]["To"] = "musicnguyens@gmail.com"
+    # message["payload"]["headers"]["From"] = "charlessjindra@gmail.com"
+    # message["payload"]["headers"]["Subject"] = "poopy stinky"
+
+    # print(type(message))
+
+    # # encoded message
+    # #encoded_message = base64.urlsafe_b64encode(message.as_bytes()).encode()
+    create_message = base64.b64encode(message.as_bytes()).decode()
+
+    
+    # message = MIMEText('This is the body of tdskfjhe email')
+    # message['To'] = 'musicnguyens@gmail.com'
+    # message['subject'] = 'Email Subject'
+    # create_message = {"raw": base64.urlsafe_b64encode(message.as_bytes()).decode()}
+    # pylint: disable=E1101
+
+
+    import requests
+
+    url = f'https://gmail.googleapis.com/gmail/v1/users/me/messages/send'
+
+    print('here are the creds')
+    print(creds.token)
+    print('there was the creds')
+    Headers = { 'Authorization': f'Bearer {creds.token}', 'Content-Type': 'application/json', 'Accept': 'application/json' }
+
+    Headers["To"] = "musicnguyens@gmail.com"
+    x = requests.post(url=url, data=create_message, headers=Headers)
+
+    
+
+    # print(f'Draft id: {draft["id"]}\nDraft message: {draft["message"]}')
+    print(x.text)
+
+  except HttpError as error:
+    print(f"An error occurred: {error}")
+    draft = None
+
+
 #setup logger
 #Let us Create an object 
 logger=logging.getLogger() 
@@ -82,15 +151,21 @@ username =  sys.argv[1]
 # sys.argv[1]
 scope = 'user-modify-playback-state user-top-read playlist-modify-public user-read-currently-playing playlist-read-collaborative'
 
+#login with Gmail API
+gmail_api_scopes = ['https://www.googleapis.com/auth/gmail.send']
+credentials = get_credentials(gmail_api_scopes)
+
+sendEmail(creds=credentials)
+
+#token = util.prompt_for_user_token(username, scope)
 #erase cache and prompt for user permission
 try:
-    token = util.prompt_for_user_token(username, scope, cache_path='.cache-charlessjindra')
+    token = util.prompt_for_user_token(username, scope, cache_path='.cache-charlessjindra', client_id='fae7ec0527c946709dc8a03d0519330a', client_secret='994c5a8883cc4e72a108ab8c3cda6b70', redirect_uri='http://localhost:4200')
 except:
     os.remove(f".cache-{username}")
     token = util.prompt_for_user_token(username, scope)
 
 #print('well we got past the stupid junk')
-#set up spotify object
 spotifyObj = spotipy.Spotify(auth=token)
 
 while True:
@@ -124,7 +199,7 @@ while True:
                     "id": album["id"],
                     "name": album["name"],
                     "artist": album["artists"][0]["name"],
-                    "img_url": album["images"][1]["url"],
+                    "img_url": album["images"][0]["url"],
                     "timestamp": str(datetime.now())
                 }
                 print(json.dumps(binData, indent=4))
