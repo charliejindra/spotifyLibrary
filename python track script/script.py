@@ -151,7 +151,6 @@ while True:
 
     try:
 
-        something = 34 / 0
         try:
             data = spotifyObj.current_user_playing_track()
         except Exception as inst:
