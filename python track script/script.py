@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import sys
 import json
+import traceback
 import spotipy
 import webbrowser
 import spotipy.util as util
@@ -82,7 +83,7 @@ def get_credentials(scopes):
     credentials = flow.run_local_server(port=4200)
     return credentials
 
-def sendEmail(creds):
+def sendEmail(creds, body, to="charlessjindra@gmail.com", subject="An Error Occurred"):
   
     # CODE BASED ON:
     #https://developers.google.com/gmail/api/guides/sending#python_2
@@ -92,10 +93,10 @@ def sendEmail(creds):
 
     message = EmailMessage()
     print(type(message))
-    message["To"] = "charlessjindra@gmail.com"
+    message["To"] = to
     message["From"] = "charlessjindra@gmail.com"
-    message["Subject"] = "poopy stinky"
-    message.set_content('this is a message to remind you that you are poopy and also stinky')
+    message["Subject"] = subject
+    message.set_content(body)
     
     encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
 
@@ -135,8 +136,6 @@ scope = 'user-modify-playback-state user-top-read playlist-modify-public user-re
 gmail_api_scopes = ['https://www.googleapis.com/auth/gmail.send']
 credentials = get_credentials(gmail_api_scopes)
 
-sendEmail(creds=credentials)
-
 #token = util.prompt_for_user_token(username, scope)
 #erase cache and prompt for user permission
 try:
@@ -150,65 +149,77 @@ spotifyObj = spotipy.Spotify(auth=token)
 
 while True:
 
-
     try:
-        data = spotifyObj.current_user_playing_track()
-    except Exception as inst:
-        print('exception reached')
-        print(type(inst))    # the exception type
-        print(inst.args)     # arguments stored in .args
-        print(inst)          # __str__ allows args to be printed directly,
-        token = util.prompt_for_user_token(username, scope, cache_path='.cache-charlessjindra')
-        spotifyObj = spotipy.Spotify(auth=token)
 
-    #print(data["currently_playing_type"])
+        something = 34 / 0
+        try:
+            data = spotifyObj.current_user_playing_track()
+        except Exception as inst:
+            print('exception reached')
+            print(type(inst))    # the exception type
+            print(inst.args)     # arguments stored in .args
+            print(inst)          # __str__ allows args to be printed directly,
+            token = util.prompt_for_user_token(username, scope, cache_path='.cache-charlessjindra')
+            spotifyObj = spotipy.Spotify(auth=token)
 
-    if(data):
-        if(data["currently_playing_type"] == 'track'):
+        #print(data["currently_playing_type"])
 
-            print(data["progress_ms"] / data["item"]["duration_ms"])
+        if(data):
+            if(data["currently_playing_type"] == 'track'):
 
-            # we have to have listened to a really good portion of the song
-            if(data["progress_ms"] / data["item"]["duration_ms"] > .9):
-            
+                print(data["progress_ms"] / data["item"]["duration_ms"])
 
-                album = data["item"]["album"]
+                # we have to have listened to a really good portion of the song
+                if(data["progress_ms"] / data["item"]["duration_ms"] > .9):
+                
 
-                print("new data")
-                binData = {
-                    "id": album["id"],
-                    "name": album["name"],
-                    "artist": album["artists"][0]["name"],
-                    "img_url": album["images"][0]["url"],
-                    "timestamp": str(datetime.now())
-                }
-                print(json.dumps(binData, indent=4))
+                    album = data["item"]["album"]
 
-                import requests
-                url = 'https://api.jsonbin.io/v3/b/656288a70574da7622cc03b3'
-                headers = {
-                'Content-Type': 'application/json',
-                'X-Master-Key': '$2a$10$4ESULxsDJTd8cdmFp2fCouMPM7mGrNoGMf9OW2MA3FVy6YjLg9M1m'
-                }
+                    print("new data")
+                    binData = {
+                        "id": album["id"],
+                        "name": album["name"],
+                        "artist": album["artists"][0]["name"],
+                        "img_url": album["images"][0]["url"],
+                        "timestamp": str(datetime.now())
+                    }
+                    print(json.dumps(binData, indent=4))
 
-                req = requests.get(url+"/latest", json=None, headers=headers)
+                    import requests
+                    url = 'https://api.jsonbin.io/v3/b/656288a70574da7622cc03b3'
+                    headers = {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': '$2a$10$4ESULxsDJTd8cdmFp2fCouMPM7mGrNoGMf9OW2MA3FVy6YjLg9M1m'
+                    }
 
-                responseArray = json.loads(req.text)["record"]
-                #print(responseArray)
+                    req = requests.get(url+"/latest", json=None, headers=headers)
 
-                if(not containsThisAlbum(binData["id"], responseArray)):
+                    responseArray = json.loads(req.text)["record"]
+                    #print(responseArray)
 
-                    print("inserting into array")
-                    responseArray.insert(0,binData)
+                    if(not containsThisAlbum(binData["id"], responseArray)):
 
-                    req = requests.put(url, json=responseArray, headers=headers)
-                    print("inserted into bin")
-                    #print(req.text)
-                else:
-                    print("record already present, waiting")
+                        print("inserting into array")
+                        responseArray.insert(0,binData)
+
+                        req = requests.put(url, json=responseArray, headers=headers)
+                        print("inserted into bin")
+                        #print(req.text)
+                    else:
+                        print("record already present, waiting")
 
 
-    print("==================")
+        print("==================")
 
 
-    time.sleep(10)
+        time.sleep(10)
+
+    except Exception as e:
+        print('==================')
+        print('==================')
+        print('==================')
+        print('==================')
+        print(e)
+        prettyExc = traceback.format_exc()
+        sendEmail(creds=credentials, body=prettyExc)
+        exit()
